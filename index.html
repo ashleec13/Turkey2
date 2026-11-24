@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Webbed Turkey Disguise | CSS Live Demo</title>
+   <!--
+  HONORS ADVANCED WEB DESIGN 2 | CSS LIVE DEMO
+
+  “Thanksgiving Turkey” by Álvaro Montoro
+  https://codepen.io/alvaromontoro/pen/GRjKBvp
+  Original HTML and CSS, with classroom comments added.
+
+  BEFORE CLASS
+  Open this file in a browser as your finished reference. Save a second
+  copy as index.html. In that copy, remove the CSS from STEP 1 through
+  the last .tail:nth-child rule. Keep the three page setup rules, the
+  corner badge styles and all the HTML. Have the two files open side
+  by side in VS Code. Save and refresh after each step.
+
+  LIVE-CODING ORDER | ABOUT 30 MINUTES
+  1. Body (4 min) — Center the rectangle, then round it into a circle.
+  2. Wings (4 min) — Draw one wing and mirror the other.
+  3. Head, neck and face (7 min) — Reveal the neck with ::before.
+     Then add the two eyes, triangle beak and red snood.
+  4. Legs and toes (4 min) — Reuse one leg style and rotate the toes.
+  5. Hat (4 min) — Build the brim and crown, then add the buckle.
+  6. Feather fan (7 min) — Start with one visible feather. Rotate
+     around its base, then reveal the full fan and alternating colors.
+
+  QUICK CLASS CHECK
+  Ask students to point to one example of symmetry and one of repetition.
+  For a DevTools experiment, toggle the neck's ::before rule or change a
+  feather's pivot. Refresh to bring back the original design.
+
+  MIT License
+  Copyright (c) 2020 Álvaro Montoro
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+   <style>
+      /* PAGE SETUP
+   Keep these three rules in the live-coding copy. */
+      html,
+      body {
+         overflow: hidden;
+         background: #fee;
+      }
+
+      /* Reuse the palette below. Both sides use vmin, so the square scales
+   with the shorter side of the browser window. top and left put its
+   corner at the center. translate pulls it back by half its own size. */
+      .cartoon {
+         --brown1: #753;
+         --brown2: #975;
+         --orange1: orange;
+         --orange2: darkorange;
+         width: 80vmin;
+         height: 80vmin;
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+      }
+
+      /* Absolute positioning lets the parts overlap. Offsets use the nearest
+   positioned ancestor. Most parts use .cartoon. The face uses .head
+   because its parts are nested inside it. border-box keeps borders
+   inside the declared width and height. */
+      .cartoon div {
+         position: absolute;
+         box-sizing: border-box;
+      }
+
+      /* STEP 1 | BODY
+   Width and height are both 40% of the square canvas. Set the color
+   and refresh to see the square, then use border-radius to round it. */
+      .body {
+         width: 40%;
+         height: 40%;
+         background: var(--brown1);
+         color: var(--brown1);
+         border-radius: 50%;
+         /* left measures from the canvas. translate measures from the body.
+    Together they center the body horizontally. */
+         top: 40%;
+         left: 50%;
+         transform: translate(-50%, 0);
+         /* Two sharp shadows shrink and shift down to add small details where
+    the legs meet the body. They pick up the CSS color. */
+         box-shadow:
+            -4vmin 14.5vmin 0 -13vmin,
+            4vmin 14.5vmin 0 -13vmin
+      }
+
+      /* STEP 2 | WINGS
+   Rounded and sharp corners shape the wing. Use the top-right corner
+   as the pivot so the wing tilts from where it meets the body. */
+      .wing {
+         height: 30%;
+         width: 20%;
+         background: var(--brown2);
+         border-radius: 100% 0% 100% 5%;
+         top: 41%;
+         left: 23%;
+         transform-origin: top right;
+         transform: rotate(-10deg);
+      }
+
+      /* The + selects the wing immediately after the first one. left: auto
+   clears the shared left offset so right can place it. scaleX(-1)
+   mirrors both the shape and its tilt. */
+      .wing+.wing {
+         left: auto;
+         right: 43%;
+         transform: scaleX(-1) rotate(-10deg);
+      }
+
+      /* STEP 3 | HEAD, NECK AND FACE
+   Start with a circle. clip-path cuts a flat edge where the hat sits.
+   The clip extends below the circle to leave room for the neck. */
+      .head {
+         width: 19%;
+         height: 19%;
+         border-radius: 50%;
+         background: var(--brown2);
+         top: 15%;
+         left: 50%;
+         transform: translate(-50%, 0);
+         clip-path: polygon(0% 20%, 100% 20%, 100% 500%, 0% 500%);
+      }
+
+      /* content: "" creates a box for the neck. It starts 80% down the head
+   so the two shapes overlap. The same brown fills the join, and the
+   last two corner radii round off the bottom. Refresh here. */
+      .head::before {
+         content: "";
+         display: block;
+         position: absolute;
+         width: 40%;
+         height: 120%;
+         background: var(--brown2);
+         top: 80%;
+         left: 50%;
+         transform: translate(-50%, 0);
+         border-radius: 0 0 100% 100% / 30%;
+      }
+
+      /* Draw one black dot 2.5vmin left of center. With zero blur, its shadow
+   makes a second dot 5vmin to the right, so the eyes are evenly spaced. */
+      .eye {
+         width: 10%;
+         height: 10%;
+         background: black;
+         border-radius: 50%;
+         top: 45%;
+         left: 50%;
+         transform: translate(-50%, 0) translate(-2.5vmin, 0);
+         box-shadow: 5vmin 0
+      }
+
+      /* The top and bottom borders are transparent. They taper the orange
+   left border into a triangle that points to the right. */
+      .beak {
+         width: 4vmin;
+         height: 3vmin;
+         border-left: 4vmin solid var(--orange1);
+         border-top: 1.5vmin solid transparent;
+         border-bottom: 1.5vmin solid transparent;
+         top: 60%;
+         left: 50%;
+      }
+
+      /* The snood starts at the same center line as the beak. Shifting it
+   left by its full width places it just to the left of that line. */
+      .red {
+         width: 2.5vmin;
+         height: 6vmin;
+         background: #d00;
+         border-radius: 100% / 100% 0 100% 100%;
+         top: 60%;
+         left: 50%;
+         transform: translate(-100%, 0);
+      }
+
+      /* STEP 4 | LEGS AND TOES
+   Start both legs at the center and shift them 4vmin in opposite
+   directions. The repeating gradient adds thin stripes over the orange. */
+      .leg {
+         width: 3%;
+         height: 21%;
+         background: var(--orange1);
+         top: 79%;
+         left: 50%;
+         transform: translate(-50%, 0) translate(-4vmin, 0);
+         border-radius: 5vmin / 50%;
+         background-image:
+            repeating-linear-gradient(transparent 0 10%, rgba(0, 0, 0, 0.1) 0 11%);
+      }
+
+      .leg+.leg {
+         transform: translate(-50%, 0) translate(4vmin, 0);
+      }
+
+      /* Each leg gets two toes from the same rule. Both pivot at the top
+   center so they stay attached as they rotate. The final rule turns
+   the second toe the opposite way so the toes spread apart. */
+      .leg::before,
+      .leg::after {
+         content: "";
+         display: block;
+         position: absolute;
+         width: 80%;
+         height: 35%;
+         left: 50%;
+         bottom: 0;
+         background: var(--orange1);
+         border-radius: 5vmin;
+         transform-origin: 50% 0;
+         transform: translate(-50%, 0) rotate(30deg);
+      }
+
+      .leg::after {
+         transform: translate(-50%, 0) rotate(-30deg);
+      }
+
+      /* STEP 5 | HAT
+   Start with a wide, short oval for the brim. The inset shadow stays
+   inside the crown and paints the lighter band across the bottom. */
+      .hat-bottom {
+         width: 35%;
+         height: 8%;
+         border-radius: 50%;
+         background: black;
+         top: 15%;
+         left: 50%;
+         transform: translate(-50%, 0);
+      }
+
+      .hat-top {
+         width: 16%;
+         height: 20%;
+         background: black;
+         box-shadow: inset 0 -7vmin #fff3;
+         border-radius: 100% / 230% 230% 0% 0%;
+         top: 0;
+         left: 50%;
+         transform: translate(-50%, 0);
+      }
+
+      /* A small bordered box makes the buckle. Its position is measured
+   from the crown, so it follows the hat if the hat moves. */
+      .hat-top::before {
+         content: "";
+         display: block;
+         position: absolute;
+         width: 40%;
+         height: 2vmin;
+         border: 1vmin solid #772;
+         border-radius: 1vmin;
+         bottom: 3.25vmin;
+         left: 50%;
+         transform: translate(-50%, 0);
+      }
+
+      /* STEP 6 | ALL 13 TAIL FEATHERS
+   All 13 feathers overlap until their angles differ. The feather divs
+   come first in the HTML, so the rest of the turkey paints over them. */
+      .tail {
+         width: 10%;
+         height: 40%;
+         background: var(--orange1);
+         border-radius: 100% / 30% 30% 170% 170%;
+         /* Put the pivot at the center of the bottom edge so the tips fan out
+    while the bases stay together. */
+         transform-origin: 50% 100%;
+         top: 30%;
+         left: 50%;
+         transform: translate(-50%, 0);
+      }
+
+      /* nth-child counts all children of .cartoon in HTML order. Since the
+   feathers come first, odd and even alternate the feather colors. */
+      .tail:nth-child(odd) {
+         background: var(--orange1);
+      }
+
+      .tail:nth-child(even) {
+         background: var(--orange2);
+      }
+
+      /* Each transform replaces the base transform, so keep translate to
+   center every feather on the same line. One upright feather and pairs
+   of equal positive and negative angles make a symmetric fan.
+   Add the 17deg rule first and toggle transform-origin in DevTools. */
+      .tail:nth-child(1) {
+         transform: translate(-50%, 0) rotate(0);
+      }
+
+      .tail:nth-child(2) {
+         transform: translate(-50%, 0) rotate(17deg);
+      }
+
+      .tail:nth-child(3) {
+         transform: translate(-50%, 0) rotate(34deg);
+      }
+
+      .tail:nth-child(4) {
+         transform: translate(-50%, 0) rotate(51deg);
+      }
+
+      .tail:nth-child(5) {
+         transform: translate(-50%, 0) rotate(68deg);
+      }
+
+      .tail:nth-child(6) {
+         transform: translate(-50%, 0) rotate(85deg);
+      }
+
+      .tail:nth-child(7) {
+         transform: translate(-50%, 0) rotate(102deg);
+      }
+
+      .tail:nth-child(8) {
+         transform: translate(-50%, 0) rotate(-17deg);
+      }
+
+      .tail:nth-child(9) {
+         transform: translate(-50%, 0) rotate(-34deg);
+      }
+
+      .tail:nth-child(10) {
+         transform: translate(-50%, 0) rotate(-51deg);
+      }
+
+      .tail:nth-child(11) {
+         transform: translate(-50%, 0) rotate(-68deg);
+      }
+
+      .tail:nth-child(12) {
+         transform: translate(-50%, 0) rotate(-85deg);
+      }
+
+      .tail:nth-child(13) {
+         transform: translate(-50%, 0) rotate(-102deg);
+      }
+
+      /* WEBBED SUPERHERO TURKEY | red-and-blue suit, web texture, and emblem */
+      .cartoon {
+         --suit-red: #e51b23;
+         --suit-red-dark: #a60b16;
+         --suit-blue: #1478e0;
+         --suit-blue-dark: #082b55;
+         --web: rgba(5, 14, 27, 0.7);
+         --orange1: #f5b900;
+         --orange2: #e6a800;
+      }
+
+      .tail {
+         width: 9%;
+         height: 36%;
+         border: 0.4vmin solid #071321;
+         background-image:
+            repeating-conic-gradient(from 0deg at 50% 20%, transparent 0deg 29deg, var(--web) 29.5deg 30.5deg, transparent 31deg 60deg),
+            repeating-radial-gradient(ellipse at 50% 20%, transparent 0 2vmin, var(--web) 2.08vmin 2.2vmin, transparent 2.28vmin 4vmin);
+         z-index: 0;
+      }
+
+      .tail:nth-child(odd) {
+         background-color: var(--suit-red);
+      }
+
+      .tail:nth-child(even) {
+         background-color: var(--suit-blue);
+      }
+
+      .tail:nth-child(odd),
+      .tail:nth-child(even) {
+         background-image:
+            repeating-conic-gradient(from 0deg at 50% 20%, transparent 0deg 29deg, var(--web) 29.5deg 30.5deg, transparent 31deg 60deg),
+            repeating-radial-gradient(ellipse at 50% 20%, transparent 0 2vmin, var(--web) 2.08vmin 2.2vmin, transparent 2.28vmin 4vmin);
+      }
+
+      .wing {
+         width: 23%;
+         height: 29%;
+         top: 39%;
+         left: 19%;
+         background-image:
+            repeating-conic-gradient(from 0deg at 50% 20%, transparent 0deg 29deg, var(--web) 29.5deg 30.5deg, transparent 31deg 60deg),
+            repeating-radial-gradient(ellipse at 50% 20%, transparent 0 2vmin, var(--web) 2.08vmin 2.2vmin, transparent 2.28vmin 4vmin),
+            linear-gradient(145deg, #2388ef 0 68%, var(--suit-red) 68% 76%, var(--suit-blue-dark) 76%);
+         border: 0.4vmin solid #071321;
+         transform: rotate(-13deg);
+         z-index: 2;
+      }
+
+      .wing+.wing {
+         left: auto;
+         right: 39%;
+         transform: scaleX(-1) rotate(-13deg);
+      }
+
+      .body {
+         background-color: var(--suit-blue);
+         background-image:
+            repeating-conic-gradient(from 0deg at 50% 28%, transparent 0deg 29deg, var(--web) 29.5deg 30.5deg, transparent 31deg 60deg),
+            repeating-radial-gradient(ellipse at 50% 28%, transparent 0 2.2vmin, var(--web) 2.28vmin 2.4vmin, transparent 2.48vmin 4.2vmin),
+            linear-gradient(180deg, var(--suit-red) 0 78%, var(--suit-blue) 78% 100%);
+         border: 0.5vmin solid #071321;
+         z-index: 3;
+      }
+
+      .body::before {
+         content: "";
+         display: block;
+         position: absolute;
+         width: 38%;
+         height: 34%;
+         top: 15%;
+         left: 31%;
+         background: #071321;
+         clip-path: polygon(50% 0, 59% 12%, 74% 8%, 100% 0, 88% 24%, 69% 30%, 75% 37%, 100% 34%, 84% 51%, 67% 47%, 69% 57%, 100% 72%, 76% 72%, 62% 64%, 61% 76%, 84% 100%, 61% 91%, 50% 77%, 39% 91%, 16% 100%, 39% 76%, 38% 64%, 24% 72%, 0 72%, 31% 57%, 33% 47%, 16% 51%, 0 34%, 25% 37%, 31% 30%, 12% 24%, 0 0, 26% 8%, 41% 12%);
+         z-index: 1;
+      }
+
+      .body::after {
+         content: "";
+         display: block;
+         position: absolute;
+         width: 12%;
+         height: 34%;
+         top: 16%;
+         left: 44%;
+         background:
+            radial-gradient(ellipse 38% 12% at 50% 8%, #071321 97%, transparent 100%),
+            radial-gradient(ellipse 34% 19% at 50% 29%, #071321 97%, transparent 100%),
+            radial-gradient(ellipse 50% 39% at 50% 69%, #071321 97%, transparent 100%);
+         z-index: 2;
+      }
+
+      .head {
+         width: 20%;
+         height: 18%;
+         top: 15%;
+         border-radius: 50% 50% 46% 46% / 48% 48% 52% 52%;
+         clip-path: none;
+         transform: translateX(-50%);
+         background-color: var(--suit-red);
+         background-image:
+            repeating-conic-gradient(from 0deg at 50% 45%, transparent 0deg 29deg, var(--web) 29.5deg 30.5deg, transparent 31deg 60deg),
+            repeating-radial-gradient(ellipse at 50% 45%, transparent 0 1.8vmin, var(--web) 1.88vmin 2vmin, transparent 2.08vmin 3.5vmin);
+         z-index: 8;
+      }
+
+      .head::before {
+         width: 35%;
+         height: 60%;
+         top: 78%;
+         border-radius: 0 0 50% 50%;
+         background-color: var(--suit-red);
+         background-image:
+            repeating-conic-gradient(from 0deg at 50% 0%, transparent 0deg 29deg, var(--web) 29.5deg 30.5deg, transparent 31deg 60deg),
+            repeating-radial-gradient(ellipse at 50% 0%, transparent 0 1.8vmin, var(--web) 1.88vmin 2vmin, transparent 2.08vmin 3.5vmin);
+         z-index: 0;
+      }
+
+      .head .eye {
+         width: 0;
+         height: 0;
+         top: 0;
+         left: 0;
+         background: transparent;
+         box-shadow: none;
+         transform: none;
+         z-index: 2;
+      }
+
+      .head .eye::before,
+      .head .eye::after {
+         content: "";
+         display: block;
+         position: absolute;
+         top: 4.6vmin;
+         width: 4.4vmin;
+         height: 3.1vmin;
+         border: 0.32vmin solid #071321;
+         filter: drop-shadow(0 0 0.2vmin #071321);
+      }
+
+      .head .eye::before {
+         left: 2.25vmin;
+         background:
+            radial-gradient(circle at 68% 55%, #071321 0 20%, transparent 22%),
+            radial-gradient(circle at 72% 49%, #fff 0 0.22vmin, transparent 0.26vmin),
+            #f5f7f8;
+         clip-path: polygon(4% 12%, 100% 0, 84% 75%, 59% 100%, 25% 82%, 0 34%);
+      }
+
+      .head .eye::after {
+         left: 9.35vmin;
+         background:
+            radial-gradient(circle at 32% 55%, #071321 0 20%, transparent 22%),
+            radial-gradient(circle at 28% 49%, #fff 0 0.22vmin, transparent 0.26vmin),
+            #f5f7f8;
+         clip-path: polygon(0 0, 96% 12%, 100% 34%, 75% 82%, 41% 100%, 16% 75%);
+      }
+
+      .hat-top {
+         display: none;
+      }
+
+      .hat-bottom {
+         display: none;
+      }
+
+      .beak {
+         width: 7vmin;
+         height: 6vmin;
+         top: 55%;
+         left: 50%;
+         border: 0;
+         background: var(--orange1);
+         clip-path: polygon(0 0, 100% 0, 50% 100%);
+         filter: drop-shadow(0 0 0.25vmin #071321);
+         transform: translateX(-50%);
+         z-index: 3;
+      }
+
+      .head .red {
+         z-index: 2;
+      }
+
+      .leg {
+         width: 4%;
+         height: 19%;
+         border: 0.35vmin solid #071321;
+      }
+
+      .leg::before,
+      .leg::after {
+         border: 0.3vmin solid #071321;
+      }
+
+      /* SPIDER-MAN CITY BACKGROUND */
+      html {
+         background-color: #06101f;
+      }
+
+      body {
+         background: transparent;
+      }
+
+      body::before,
+      body::after {
+         content: "";
+         position: fixed;
+         inset: 0;
+         z-index: -1;
+         pointer-events: none;
+      }
+
+      body::before {
+         background-image:
+            repeating-linear-gradient(90deg, transparent 0 1.35rem, rgba(255, 208, 126, 0.56) 1.35rem 1.48rem, transparent 1.48rem 2.45rem),
+            repeating-linear-gradient(0deg, transparent 0 1.45rem, rgba(95, 164, 235, 0.2) 1.45rem 1.55rem, transparent 1.55rem 2.6rem),
+            repeating-linear-gradient(90deg, transparent 0 5.2rem, rgba(76, 132, 203, 0.16) 5.2rem 5.3rem, transparent 5.3rem 6.4rem),
+            linear-gradient(180deg, #132a4a 0%, #091326 100%);
+         clip-path: polygon(0 100%, 0 63%, 5% 63%, 5% 51%, 10% 51%, 10% 60%, 15% 60%, 15% 43%, 20% 43%, 20% 58%, 24% 58%, 24% 34%, 27% 28%, 30% 34%, 30% 57%, 35% 57%, 35% 47%, 40% 47%, 40% 62%, 46% 62%, 46% 38%, 51% 38%, 51% 49%, 56% 49%, 56% 32%, 60% 24%, 64% 32%, 64% 56%, 69% 56%, 69% 44%, 74% 44%, 74% 61%, 80% 61%, 80% 37%, 84% 37%, 84% 52%, 89% 52%, 89% 45%, 94% 45%, 94% 60%, 100% 60%, 100% 100%);
+         filter: drop-shadow(0 -0.3vmin 0.8vmin rgba(35, 105, 190, 0.3));
+      }
+
+      body::after {
+         background-image:
+            repeating-linear-gradient(90deg, transparent 0 1.5rem, rgba(238, 70, 77, 0.24) 1.5rem 1.62rem, transparent 1.62rem 2.8rem),
+            repeating-linear-gradient(0deg, transparent 0 1.8rem, rgba(255, 205, 124, 0.36) 1.8rem 1.92rem, transparent 1.92rem 3rem),
+            linear-gradient(180deg, #0c1930 0%, #050a15 100%);
+         clip-path: polygon(0 100%, 0 76%, 7% 76%, 7% 69%, 14% 69%, 14% 80%, 20% 80%, 20% 66%, 28% 66%, 28% 74%, 35% 74%, 35% 62%, 43% 62%, 43% 78%, 51% 78%, 51% 68%, 59% 68%, 59% 77%, 66% 77%, 66% 64%, 74% 64%, 74% 76%, 82% 76%, 82% 67%, 90% 67%, 90% 78%, 96% 78%, 96% 65%, 100% 65%, 100% 100%);
+      }
+
+      /* WEB-SWING CONTROLS AND ANIMATION */
+      .swing-controls {
+         position: fixed;
+         top: 1.1rem;
+         left: 50%;
+         display: flex;
+         gap: 0.75rem;
+         transform: translateX(-50%);
+         z-index: 100;
+      }
+
+      .swing-controls button {
+         min-width: 9.5rem;
+         padding: 0.8rem 1.1rem;
+         border: 1px solid rgba(255, 255, 255, 0.36);
+         border-radius: 999px;
+         color: #fff;
+         font: 700 0.82rem/1.1 "Segoe UI", Arial, sans-serif;
+         letter-spacing: 0.08em;
+         cursor: pointer;
+         box-shadow: 0 0.45rem 1.3rem rgba(0, 0, 0, 0.32);
+         transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease;
+      }
+
+      #swing-away {
+         background: linear-gradient(135deg, #e51b23, #a60b16);
+      }
+
+      #bring-back {
+         background: linear-gradient(135deg, #1478e0, #082b55);
+      }
+
+      .swing-controls button:hover {
+         transform: translateY(-2px);
+         filter: brightness(1.12);
+      }
+
+      .swing-controls button:focus-visible {
+         outline: 3px solid #fff;
+         outline-offset: 3px;
+      }
+
+      .cartoon::before {
+         content: "";
+         position: absolute;
+         top: -58vh;
+         left: 50%;
+         width: 0.3vmin;
+         height: 70vh;
+         background: linear-gradient(90deg, rgba(211, 231, 255, 0.35), #fff 48%, #d3e7ff 62%, rgba(211, 231, 255, 0.35));
+         box-shadow: 0 0 0.5rem rgba(225, 241, 255, 0.7);
+         opacity: 0;
+         transform: translateX(-50%) scaleY(0);
+         transform-origin: 50% 100%;
+         pointer-events: none;
+         z-index: 30;
+      }
+
+      body.is-swinging .cartoon::before {
+         animation: web-line-shoot 420ms ease-out forwards;
+      }
+
+      body.is-returning .cartoon::before {
+         animation: web-line-retract 480ms ease-in forwards;
+      }
+
+      @keyframes web-line-shoot {
+         from {
+            opacity: 0;
+            transform: translateX(-50%) scaleY(0);
+         }
+         to {
+            opacity: 1;
+            transform: translateX(-50%) scaleY(1);
+         }
+      }
+
+      @keyframes web-line-retract {
+         from {
+            opacity: 1;
+            transform: translateX(-50%) scaleY(1);
+         }
+         to {
+            opacity: 0;
+            transform: translateX(-50%) scaleY(0);
+         }
+      }
+
+      .turkey-title {
+         position: fixed;
+         bottom: 0.8rem;
+         left: 50%;
+         z-index: 100;
+         max-width: calc(100vw - 1.5rem);
+         margin: 0;
+         color: #fff;
+         font: 900 clamp(1.05rem, 2.1vw, 1.75rem)/1.1 "Segoe UI", Arial, sans-serif;
+         letter-spacing: 0.075em;
+         text-align: center;
+         text-shadow: 0 2px #e51b23, 2px 3px #1478e0, 0 5px 12px rgba(0, 0, 0, 0.9);
+         text-transform: uppercase;
+         transform: translateX(-50%);
+         white-space: nowrap;
+      }
+
+      @media (max-width: 480px) {
+         .swing-controls {
+            gap: 0.45rem;
+         }
+
+         .swing-controls button {
+            min-width: 0;
+            padding: 0.7rem 0.8rem;
+            font-size: 0.72rem;
+         }
+
+         .turkey-title {
+            font-size: clamp(0.85rem, 4vw, 1.15rem);
+            letter-spacing: 0.04em;
+         }
+      }
+   </style>
+</head>
+
+<body>
+   <div class="cartoon">
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="tail"></div>
+      <div class="leg"></div>
+      <div class="leg"></div>
+      <div class="body"></div>
+      <div class="wing"></div>
+      <div class="wing"></div>
+      <div class="hat-top"></div>
+      <div class="hat-bottom"></div>
+      <div class="head">
+         <div class="eye"></div>
+         <div class="beak"></div>
+         <div class="red"></div>
+      </div>
+   </div>
+
+   <div class="swing-controls" aria-label="Web-swinging controls">
+      <button id="swing-away" type="button">SWING AWAY!</button>
+      <button id="bring-back" type="button">BRING BACK!</button>
+   </div>
+
+   <h1 class="turkey-title">The Amazing Gobbler-Slinger</h1>
+
+   <script>
+      (() => {
+         const cartoon = document.querySelector(".cartoon");
+         const swingButton = document.querySelector("#swing-away");
+         const returnButton = document.querySelector("#bring-back");
+         const homeTransform = "translate(-50%, -50%)";
+         const swingPath = [
+            { transform: homeTransform, offset: 0 },
+            { transform: homeTransform, offset: 0.1 },
+            { transform: "translate(-50%, -50%) translate(7vw, -14vh) rotate(-8deg) scale(0.98)", offset: 0.3 },
+            { transform: "translate(-50%, -50%) translate(18vw, -24vh) rotate(9deg) scale(0.92)", offset: 0.48 },
+            { transform: "translate(-50%, -50%) translate(34vw, -17vh) rotate(17deg) scale(0.84)", offset: 0.66 },
+            { transform: "translate(-50%, -50%) translate(45vw, -31vh) rotate(12deg) scale(0.77)", offset: 0.83 },
+            { transform: "translate(-50%, -50%) translate(52vw, -42vh) rotate(22deg) scale(0.7)", offset: 1 }
+         ];
+         let phase = "home";
+         let activeMotion = null;
+         let motionId = 0;
+
+         if (!cartoon || !swingButton || !returnButton) {
+            throw new Error("Web-swing controls could not find the turkey or buttons.");
+         }
+
+         function startMotion(keyframes, duration, nextPhase, finalPhase, tetherClass, restartTether) {
+            const previousMotion = activeMotion;
+            const id = ++motionId;
+            const motion = cartoon.animate(keyframes, {
+               duration,
+               easing: "cubic-bezier(0.35, 0.02, 0.2, 1)",
+               fill: "forwards"
+            });
+
+            activeMotion = motion;
+            phase = nextPhase;
+            if (previousMotion) previousMotion.cancel();
+
+            document.body.classList.remove("is-swinging");
+            document.body.classList.remove("is-returning");
+            if (restartTether) void cartoon.offsetWidth;
+            document.body.classList.add(tetherClass);
+
+            motion.addEventListener("finish", () => {
+               if (id !== motionId || activeMotion !== motion) return;
+               phase = finalPhase;
+
+               if (finalPhase === "home") {
+                  document.body.classList.remove("is-swinging", "is-returning");
+                  motion.cancel();
+                  activeMotion = null;
+               }
+            }, { once: true });
+         }
+
+         swingButton.addEventListener("click", () => {
+            const currentTransform = getComputedStyle(cartoon).transform;
+            const startingAtHome = phase === "home" && !activeMotion;
+            const keyframes = [{ transform: currentTransform, offset: 0 }];
+            let duration = 3200;
+
+            if (startingAtHome) {
+               keyframes.push(...swingPath.slice(1));
+            } else {
+               keyframes.push({ transform: homeTransform, offset: 0.22 });
+               keyframes.push(...swingPath.slice(1).map((frame) => ({
+                  transform: frame.transform,
+                  offset: 0.22 + frame.offset * 0.78
+               })));
+               duration = 4600;
+            }
+
+            startMotion(keyframes, duration, "swinging", "away", "is-swinging", true);
+         });
+
+         returnButton.addEventListener("click", () => {
+            const currentTransform = getComputedStyle(cartoon).transform;
+            if (phase === "home" && !activeMotion) {
+               document.body.classList.remove("is-swinging", "is-returning");
+               return;
+            }
+
+            const keyframes = [{ transform: currentTransform, offset: 0 }];
+            let duration = 1700;
+
+            if (phase === "away") {
+               const returnPath = [
+                  swingPath[5].transform,
+                  swingPath[4].transform,
+                  swingPath[3].transform,
+                  swingPath[2].transform,
+                  homeTransform
+               ];
+               keyframes.push(...returnPath.map((transform, index) => ({
+                  transform,
+                  offset: (index + 1) / returnPath.length
+               })));
+               duration = 3200;
+            } else {
+               keyframes.push({ transform: homeTransform, offset: 1 });
+            }
+
+            startMotion(keyframes, duration, "returning", "home", "is-returning", false);
+         });
+      })();
+   </script>
+</body>
+
+</html>
